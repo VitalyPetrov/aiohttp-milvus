@@ -15,9 +15,9 @@ class MilvusHttpClient:
 
         self.base_url: yarl.URL = yarl.URL(base_url)
         self.socket_family = socket_family
-        self.session: aiohttp.ClientSession = self.get_session()
+        self.session: aiohttp.ClientSession = self._get_session()
 
-    def get_session(self) -> aiohttp.ClientSession:
+    def _get_session(self) -> aiohttp.ClientSession:
         return aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(),
             connector=aiohttp.TCPConnector(
@@ -44,7 +44,7 @@ class MilvusHttpClient:
         try:
             async with self.session.get(url=url) as response:
                 # Milvus API has a bad-formatted headers so
-                # the default aiohttp decoder cant
+                # the default aiohttp decoder cant be used
                 data = await response.json(content_type=None)
         except TimeoutError:
             HTTPException(
@@ -80,7 +80,6 @@ class MilvusHttpClient:
 
         if search_params is not None:
             params["search"]["params"] = search_params
-
         #
 
         try:
