@@ -1,3 +1,5 @@
+import logging
+import sys
 from pydantic import BaseSettings, HttpUrl, root_validator
 
 
@@ -22,6 +24,15 @@ class MilvusSettings(BaseSettings):
 
 class Settings(BaseSettings):
     milvus: MilvusSettings = MilvusSettings()
+    api_prefix: str = ""
 
 
 settings: Settings = Settings()
+# configure logger object
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s | [%(levelname)s] %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
